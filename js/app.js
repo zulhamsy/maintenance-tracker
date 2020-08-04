@@ -2,15 +2,15 @@ const $ = x => document.querySelector(x);
 
 // UI Controller
 const UI = (function () {
+	let tr = '';
   function show(fetch) {
-    let tr = ''
     fetch.forEach((item, index) => {
       tr = document.createElement('tr');
-      tr.innerHTML +=
+      tr.innerHTML =
         `
-			 <th scope="row" id="item-${item.id}">${index + 1}</th>
+			 <th scope="row">${index + 1}</th>
 			 <td>${item.date}</td>
-			 <td>${item.distance}</td>
+			 <td>${item.distance} Km</td>
 			`;
       $('tbody').appendChild(tr);
     });
@@ -133,6 +133,5 @@ App.init();
 $('form').addEventListener('submit', (e) => {
   // run app controller to proccess
   App.submitForm();
-
   e.preventDefault();
-})
+});

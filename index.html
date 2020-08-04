@@ -23,7 +23,7 @@
       <div class="card-body py-2">
         <!-- Input Group -->
         <h6 class="my-2 text-center">Input Data</h6>
-        <form class="mb-4">
+        <form class="mb-5">
           <div class="mb-3">
             <label for="date" class="form-label text-muted">Date</label>
             <input type="date" class="form-control" id="date" required>
@@ -32,7 +32,7 @@
             <label for="distance" class="form-label text-muted">Distance</label>
             <input type="number" class="form-control" id="distance" placeholder="in KM" required>
           </div>
-          <button class="btn btn-secondary btn-block" type="submit">Add Data</button>
+          <button class="btn btn-primary btn-block font-weight-bolder" type="submit">Add Data</button>
         </form>
         <!-- Counter Graphic -->
         <h6 class="mb-2 text-center">Statistic</h6>
@@ -42,10 +42,10 @@
         </div>
         <p class="text-muted font-weight-light">Ganti Oli v-Belt</p>
         <div class="progress mb-3">
-          <div class="progress-bar bg-primary" role="progressbar" style="width: 35%"></div>
+          <div class="progress-bar bg-info" role="progressbar" style="width: 35%"></div>
         </div>
         <p class="text-muted font-weight-light">Service CVT</p>
-        <div class="progress mb-4">
+        <div class="progress mb-5">
           <div class="progress-bar bg-danger" role="progressbar" style="width: 5%"></div>
         </div>
         <!-- Historic Data -->
@@ -59,21 +59,23 @@
             </tr>
           </thead>
           <tbody>
+          	<!--
             <tr>
-              <th scope="row">1</th>
+              <th scope="row" id="item-1">1</th>
               <td>03/08/2020</td>
               <td>88 Km</td>
             </tr>
             <tr>
-              <th scope="row">2</th>
+              <th scope="row" id="item-2">2</th>
               <td>02/08/2020</td>
               <td>9 Km</td>
             </tr>
             <tr>
-              <th scope="row">3</th>
+              <th scope="row" id="item-3">3</th>
               <td>01/08/2020</td>
               <td>5 Km</td>
             </tr>
+            -->
           </tbody>
         </table>
       </div>
@@ -87,6 +89,7 @@
   <!-- Popper.js first, then Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+  <script src="./js/app.js" type="text/javascript" charset="utf-8"></script>
 </body>
 
 </html>

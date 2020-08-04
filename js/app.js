@@ -3,20 +3,17 @@ const $ = x => document.querySelector(x);
 // UI Controller
 const UI = (function () {
   function show(fetch) {
-    let html = '';
-
+    let tr = ''
     fetch.forEach((item, index) => {
-      html +=
+      tr = document.createElement('tr');
+      tr.innerHTML +=
         `
-			<tr>
 			 <th scope="row" id="item-${item.id}">${index + 1}</th>
 			 <td>${item.date}</td>
 			 <td>${item.distance}</td>
-			</tr>
 			`;
+      $('tbody').appendChild(tr);
     });
-
-    $('tbody').innerHTML = html;
   }
 
   function get() {
@@ -66,19 +63,25 @@ const Storage = (function () {
     _setData(_toString(localData));
   }
 
+  function pullData() {
+    let localData = [];
+    if (_getData()) {
+      // fetch data first
+      localData = _getData();
+      // parse to object
+      localData = _toParse(localData);
+    }
+    return localData;
+  }
+
   return {
-    storeData
+    storeData,
+    pullData
   }
 })();
 
 // Data Controller
 const Data = (function () {
-  let data = [
-    { id: 1, date: '08/01/2020', distance: 15 },
-    { id: 2, date: '08/02/2020', distance: 20 },
-    { id: 3, date: '08/03/2020', distance: 88 }
-  ];
-
   // Private Method
   function _generateID() {
     return Math.floor(Math.random() * 10);
@@ -93,7 +96,6 @@ const Data = (function () {
   }
 
   return {
-    log: data,
     process
   }
 })();
@@ -102,7 +104,7 @@ const Data = (function () {
 const App = (function () {
   function init() {
     // fetch data from DataController
-    let fetch = Data.log;
+    let fetch = Storage.pullData();
     // pass data to UIController
     UI.show(fetch);
   }
@@ -114,6 +116,8 @@ const App = (function () {
     data = Data.process(data);
     // store data to LS
     Storage.storeData(data);
+    // pass to view controller
+    UI.show(data);
   }
 
   return {
@@ -126,7 +130,7 @@ const App = (function () {
 App.init();
 
 // Users submit form
-$('form').addEventListener('submit', e => {
+$('form').addEventListener('submit', (e) => {
   // run app controller to proccess
   App.submitForm();
 

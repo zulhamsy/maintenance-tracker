@@ -1,19 +1,31 @@
 const $ = x => document.querySelector(x);
 
 // UI Controller
-const UI = (function () {
-	let tr = '';
+const UI = (function() {
+  let tr = '';
+
   function show(fetch) {
-    fetch.forEach((item, index) => {
-      tr = document.createElement('tr');
-      tr.innerHTML =
-        `
+    if (Array.isArray(fetch)) {
+      fetch.forEach((item, index) => {
+        tr = document.createElement('tr');
+        tr.innerHTML =
+          `
 			 <th scope="row">${index + 1}</th>
 			 <td>${item.date}</td>
 			 <td>${item.distance} Km</td>
 			`;
+        $('tbody').appendChild(tr);
+      });
+    } else {
+      tr = document.createElement('tr');
+      tr.innerHTML =
+        `
+        <th scope="row">#</th>
+    		<td>${fetch.date}</td>
+    		<td>${fetch.distance} Km</td>
+    		`;
       $('tbody').appendChild(tr);
-    });
+    }
   }
 
   function get() {
@@ -30,14 +42,14 @@ const UI = (function () {
 })();
 
 // LocalStorage Controller
-const Storage = (function () {
+const Storage = (function() {
   // Private Method
   function _getData() {
     return localStorage.getItem('localdata');
   }
 
   function _setData(data) {
-    return localStorage.setItem('localdata', data);
+    localStorage.setItem('localdata', data);
   }
 
   function _toParse(data) {
@@ -64,7 +76,7 @@ const Storage = (function () {
   }
 
   function pullData() {
-    let localData = [];
+    let localData;
     if (_getData()) {
       // fetch data first
       localData = _getData();
@@ -81,7 +93,7 @@ const Storage = (function () {
 })();
 
 // Data Controller
-const Data = (function () {
+const Data = (function() {
   // Private Method
   function _generateID() {
     return Math.floor(Math.random() * 10);
@@ -101,10 +113,11 @@ const Data = (function () {
 })();
 
 // App Controller
-const App = (function () {
+const App = (function() {
   function init() {
     // fetch data from DataController
     let fetch = Storage.pullData();
+    if(!fetch) return;
     // pass data to UIController
     UI.show(fetch);
   }

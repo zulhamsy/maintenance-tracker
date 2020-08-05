@@ -4,6 +4,11 @@ const $ = x => document.querySelector(x);
 const UI = (function () {
   let tr = '';
 
+  // Private Method
+  function _childCount(parent) {
+    return $(parent).childElementCount;
+  }
+
   function show(fetch) {
     if (Array.isArray(fetch)) {
       fetch.forEach((item, index) => {
@@ -20,7 +25,7 @@ const UI = (function () {
       tr = document.createElement('tr');
       tr.innerHTML =
         `
-        <th scope="row">#</th>
+        <th scope="row">${_childCount('tbody') + 1}</th>
     		<td>${fetch.date}</td>
     		<td>${fetch.distance} Km</td>
     		`;

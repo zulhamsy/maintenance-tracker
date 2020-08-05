@@ -1,7 +1,7 @@
 const $ = x => document.querySelector(x);
 
 // UI Controller
-const UI = (function() {
+const UI = (function () {
   let tr = '';
 
   function show(fetch) {
@@ -35,14 +35,20 @@ const UI = (function() {
     }
   }
 
+  function clearForm() {
+    $('#date').value = '';
+    $('#distance').value = '';
+  }
+
   return {
     show,
-    get
+    get,
+    clearForm
   }
 })();
 
 // LocalStorage Controller
-const Storage = (function() {
+const Storage = (function () {
   // Private Method
   function _getData() {
     return localStorage.getItem('localdata');
@@ -93,7 +99,7 @@ const Storage = (function() {
 })();
 
 // Data Controller
-const Data = (function() {
+const Data = (function () {
   // Private Method
   function _generateID() {
     return Math.floor(Math.random() * 10);
@@ -113,11 +119,11 @@ const Data = (function() {
 })();
 
 // App Controller
-const App = (function() {
+const App = (function () {
   function init() {
     // fetch data from DataController
     let fetch = Storage.pullData();
-    if(!fetch) return;
+    if (!fetch) return;
     // pass data to UIController
     UI.show(fetch);
   }
@@ -131,6 +137,8 @@ const App = (function() {
     Storage.storeData(data);
     // pass to view controller
     UI.show(data);
+    // clear form
+    UI.clearForm();
   }
 
   return {

@@ -1,7 +1,7 @@
 const $ = x => document.querySelector(x);
 
 // UI Controller
-const UI = (function () {
+const UI = (function() {
   let tr = '';
 
   // Private Method
@@ -13,6 +13,7 @@ const UI = (function () {
     if (Array.isArray(fetch)) {
       fetch.forEach((item, index) => {
         tr = document.createElement('tr');
+        tr.id = item.id
         tr.innerHTML =
           `
 			 <th scope="row">${index + 1}</th>
@@ -23,6 +24,7 @@ const UI = (function () {
       });
     } else {
       tr = document.createElement('tr');
+      tr.id = fetch.id;
       tr.innerHTML =
         `
         <th scope="row">${_childCount('tbody') + 1}</th>
@@ -53,7 +55,7 @@ const UI = (function () {
 })();
 
 // LocalStorage Controller
-const Storage = (function () {
+const Storage = (function() {
   // Private Method
   function _getData() {
     return localStorage.getItem('localdata');
@@ -104,17 +106,20 @@ const Storage = (function () {
 })();
 
 // Data Controller
-const Data = (function () {
+const Data = (function() {
   // Private Method
-  function _generateID() {
-    return Math.floor(Math.random() * 10);
+  function _generateID(length) {
+    let result = '',
+    		chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
   }
 
   // Public Method
   function process(input) {
     let data = input;
     // give ID
-    data.id = _generateID();
+    data.id = _generateID(3);
     return data;
   }
 
@@ -124,7 +129,7 @@ const Data = (function () {
 })();
 
 // App Controller
-const App = (function () {
+const App = (function() {
   function init() {
     // fetch data from DataController
     let fetch = Storage.pullData();

@@ -19,6 +19,7 @@ const UI = (function() {
 			 <th scope="row">${index + 1}</th>
 			 <td>${item.date}</td>
 			 <td>${item.distance} Km</td>
+			 <td><a href='#'>edit</a></td>
 			`;
         $('tbody').appendChild(tr);
       });
@@ -30,6 +31,7 @@ const UI = (function() {
         <th scope="row">${_childCount('tbody') + 1}</th>
     		<td>${fetch.date}</td>
     		<td>${fetch.distance} Km</td>
+    		<td><a href='#'>edit</a></td>
     		`;
       $('tbody').appendChild(tr);
     }

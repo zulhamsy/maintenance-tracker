@@ -48,11 +48,22 @@ const UI = (function() {
     $('#date').value = '';
     $('#distance').value = '';
   }
+  
+  function scrollTop() {
+  	window.scrollTo(0,0);
+  }
+  
+  function displayToForm(data) {
+		$('#date').value = data.date;
+		$('#distance').value = data.distance;
+  }
 
   return {
     show,
     get,
-    clearForm
+    clearForm,
+    scrollTop,
+    displayToForm
   }
 })();
 
@@ -124,9 +135,16 @@ const Data = (function() {
     data.id = _generateID(3);
     return data;
   }
+  
+  function getDataById(source, id) {
+  	for(let i = 0; i < source.length; i++) {
+  		if(source[i].id == id) return source[i];
+  	}
+  }
 
   return {
-    process
+    process,
+    getDataById
   }
 })();
 
@@ -152,10 +170,23 @@ const App = (function() {
     // clear form
     UI.clearForm();
   }
+  
+  function editRecord(id) {
+  	// scroll to top
+  	UI.scrollTop();
+  	// fetch from LS
+  	const fetch = Storage.pullData();
+  	// get data by id
+  	const data = Data.getDataById(fetch, id);
+  	// display record to form
+  	UI.displayToForm(data);
+  	// change button state
+  }
 
   return {
     init,
-    submitForm
+    submitForm,
+    editRecord
   }
 })();
 
@@ -168,3 +199,12 @@ $('form').addEventListener('submit', (e) => {
   App.submitForm();
   e.preventDefault();
 });
+
+// Users click edit button
+$('tbody').addEventListener('click', (e) => {
+	if(e.target.nodeName == 'A') {
+		const target = e.target.parentNode.parentNode.id;
+		App.editRecord(target);
+	}
+	e.preventDefault()
+})

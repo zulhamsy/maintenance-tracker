@@ -57,13 +57,37 @@ const UI = (function() {
 		$('#date').value = data.date;
 		$('#distance').value = data.distance;
   }
+  
+  function changeButton(editstate) {
+  	const submit = `<input class="btn btn-primary btn-block font-weight-bolder" type="submit" value="Add Data">`;
+  	const edit = `<input class="btn btn-warning btn-block font-weight-bolder" type="button" value="Update Data">`;
+  	const del = `<input class="btn btn-outline-danger btn-block" type="button" value="Delete">`;
+  	const cancel = `<input class="btn btn-light btn-block font-weight-light" type="button" value="Cancel">`
+  	
+  	if(editstate) {
+  		// remove submit button
+  		$('.btn').remove();
+  		// add update button
+  		$('#button-area').innerHTML = edit;
+  		// add delete button
+  		$('#button-area').innerHTML += del;
+  		// add cancel button
+  		$('#button-area').innerHTML += cancel;
+  	} else {
+  		// remove all button
+  		$('.btn').remove();
+  		// add submit button
+  		$('#button-area').innerHTML = submit;
+  	}
+  }
 
   return {
     show,
     get,
     clearForm,
     scrollTop,
-    displayToForm
+    displayToForm,
+    changeButton
   }
 })();
 
@@ -181,6 +205,7 @@ const App = (function() {
   	// display record to form
   	UI.displayToForm(data);
   	// change button state
+  	UI.changeButton(true);
   }
 
   return {

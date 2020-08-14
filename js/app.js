@@ -60,9 +60,9 @@ const UI = (function() {
   
   function changeButton(editstate) {
   	const submit = `<input class="btn btn-primary btn-block font-weight-bolder" type="submit" value="Add Data">`;
-  	const edit = `<input class="btn btn-warning btn-block font-weight-bolder" type="button" value="Update Data">`;
-  	const del = `<input class="btn btn-outline-danger btn-block" type="button" value="Delete">`;
-  	const cancel = `<input class="btn btn-light btn-block font-weight-light" type="button" value="Cancel">`
+  	const edit = `<input class="btn btn-warning btn-block font-weight-bolder" type="button" id="update" value="Update Data">`;
+  	const del = `<input class="btn btn-outline-danger btn-block" type="button" id="delete" value="Delete">`;
+  	const cancel = `<input class="btn btn-light btn-block font-weight-light" type="button" id="cancel" value="Cancel">`
   	
   	if(editstate) {
   		// remove submit button
@@ -135,10 +135,16 @@ const Storage = (function() {
     }
     return localData;
   }
+  
+  function update(dataset) {
+  	const data = _toString(dataset);
+  	_setData(data);
+  }
 
   return {
     storeData,
-    pullData
+    pullData,
+    update
   }
 })();
 
@@ -165,15 +171,25 @@ const Data = (function() {
   		if(source[i].id == id) return source[i];
   	}
   }
+  
+  function updateData(dataset, update, id) {
+  	const index = dataset.findIndex(element => element.id == id);
+  	dataset[index].date = update.date;
+  	dataset[index].distance = update.distance;
+  	return dataset
+  }
 
   return {
     process,
-    getDataById
+    getDataById,
+    updateData
   }
 })();
 
 // App Controller
 const App = (function() {
+	let editIdState;
+	
   function init() {
     // fetch data from DataController
     let fetch = Storage.pullData();
@@ -196,6 +212,8 @@ const App = (function() {
   }
   
   function editRecord(id) {
+  	// change id state
+  	editIdState = id;
   	// scroll to top
   	UI.scrollTop();
   	// fetch from LS
@@ -207,11 +225,24 @@ const App = (function() {
   	// change button state
   	UI.changeButton(true);
   }
+  
+  function updateRecord() {
+  	// get data from UI
+  	const update = UI.get();
+  	// pull data from LS
+  	let dataset = Storage.pullData();
+  	// proceed to update data in DC
+  	Data.updateData(dataset, update, editIdState);
+  	// update data to LS
+  	Storage.update(dataset);
+  	document.location.reload();
+  }
 
   return {
     init,
     submitForm,
-    editRecord
+    editRecord,
+    updateRecord
   }
 })();
 
@@ -232,4 +263,22 @@ $('tbody').addEventListener('click', (e) => {
 		App.editRecord(target);
 	}
 	e.preventDefault()
+});
+
+// Users click button on edit state
+$('#button-area').addEventListener('click', (e) => {
+	const target = e.target.id;
+	switch (target) {
+		case 'update':
+			App.updateRecord();
+			break;
+		case 'delete':
+			console.log('deleting data...');
+			break;
+		case 'cancel':
+			UI.clearForm();
+			UI.changeButton(false);
+			break
+	}
+	e.preventDefault();
 })

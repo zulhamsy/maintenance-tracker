@@ -48,37 +48,37 @@ const UI = (function() {
     $('#date').value = '';
     $('#distance').value = '';
   }
-  
+
   function scrollTop() {
-  	window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   }
-  
+
   function displayToForm(data) {
-		$('#date').value = data.date;
-		$('#distance').value = data.distance;
+    $('#date').value = data.date;
+    $('#distance').value = data.distance;
   }
-  
+
   function changeButton(editstate) {
-  	const submit = `<input class="btn btn-primary btn-block font-weight-bolder" type="submit" value="Add Data">`;
-  	const edit = `<input class="btn btn-warning btn-block font-weight-bolder" type="button" id="update" value="Update Data">`;
-  	const del = `<input class="btn btn-outline-danger btn-block" type="button" id="delete" value="Delete">`;
-  	const cancel = `<input class="btn btn-light btn-block font-weight-light" type="button" id="cancel" value="Cancel">`
-  	
-  	if(editstate) {
-  		// remove submit button
-  		$('.btn').remove();
-  		// add update button
-  		$('#button-area').innerHTML = edit;
-  		// add delete button
-  		$('#button-area').innerHTML += del;
-  		// add cancel button
-  		$('#button-area').innerHTML += cancel;
-  	} else {
-  		// remove all button
-  		$('.btn').remove();
-  		// add submit button
-  		$('#button-area').innerHTML = submit;
-  	}
+    const submit = `<input class="btn btn-primary btn-block font-weight-bolder" type="submit" value="Add Data">`;
+    const edit = `<input class="btn btn-warning btn-block font-weight-bolder" type="button" id="update" value="Update Data">`;
+    const del = `<input class="btn btn-outline-danger btn-block" type="button" id="delete" value="Delete">`;
+    const cancel = `<input class="btn btn-light btn-block font-weight-light" type="button" id="cancel" value="Cancel">`
+
+    if (editstate) {
+      // remove submit button
+      $('.btn').remove();
+      // add update button
+      $('#button-area').innerHTML = edit;
+      // add delete button
+      $('#button-area').innerHTML += del;
+      // add cancel button
+      $('#button-area').innerHTML += cancel;
+    } else {
+      // remove all button
+      $('.btn').remove();
+      // add submit button
+      $('#button-area').innerHTML = submit;
+    }
   }
 
   return {
@@ -135,10 +135,10 @@ const Storage = (function() {
     }
     return localData;
   }
-  
+
   function update(dataset) {
-  	const data = _toString(dataset);
-  	_setData(data);
+    const data = _toString(dataset);
+    _setData(data);
   }
 
   return {
@@ -153,7 +153,7 @@ const Data = (function() {
   // Private Method
   function _generateID(length) {
     let result = '',
-    		chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+      chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
     for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
   }
@@ -165,31 +165,37 @@ const Data = (function() {
     data.id = _generateID(3);
     return data;
   }
-  
+
   function getDataById(source, id) {
-  	for(let i = 0; i < source.length; i++) {
-  		if(source[i].id == id) return source[i];
-  	}
+    for (let i = 0; i < source.length; i++) {
+      if (source[i].id == id) return source[i];
+    }
+  }
+
+  function updateData(dataset, update, id) {
+    const index = dataset.findIndex(element => element.id == id);
+    dataset[index].date = update.date;
+    dataset[index].distance = update.distance;
+    return dataset
   }
   
-  function updateData(dataset, update, id) {
+  function deleteData(dataset, id) {
   	const index = dataset.findIndex(element => element.id == id);
-  	dataset[index].date = update.date;
-  	dataset[index].distance = update.distance;
-  	return dataset
+  	dataset.splice(index, 1);
   }
 
   return {
     process,
     getDataById,
-    updateData
+    updateData,
+    deleteData
   }
 })();
 
 // App Controller
 const App = (function() {
-	let editIdState;
-	
+  let editIdState;
+
   function init() {
     // fetch data from DataController
     let fetch = Storage.pullData();
@@ -210,39 +216,58 @@ const App = (function() {
     // clear form
     UI.clearForm();
   }
-  
+
   function editRecord(id) {
-  	// change id state
-  	editIdState = id;
-  	// scroll to top
-  	UI.scrollTop();
-  	// fetch from LS
-  	const fetch = Storage.pullData();
-  	// get data by id
-  	const data = Data.getDataById(fetch, id);
-  	// display record to form
-  	UI.displayToForm(data);
-  	// change button state
-  	UI.changeButton(true);
+    // change id state
+    editIdState = id;
+    // scroll to top
+    UI.scrollTop();
+    // fetch from LS
+    const fetch = Storage.pullData();
+    // get data by id
+    const data = Data.getDataById(fetch, id);
+    // display record to form
+    UI.displayToForm(data);
+    // change button state
+    UI.changeButton(true);
+  }
+
+  function updateRecord() {
+    if (editIdState) {
+      // get data from UI
+      const update = UI.get();
+      // pull data from LS
+      let dataset = Storage.pullData();
+      // proceed to update data in DC
+      Data.updateData(dataset, update, editIdState);
+      // update data to LS
+      Storage.update(dataset);
+      // reset state
+      document.location.reload();
+      editIdState = undefined;
+    }
   }
   
-  function updateRecord() {
-  	// get data from UI
-  	const update = UI.get();
+  function deleteRecord() {
+  	if(editIdState) {
   	// pull data from LS
   	let dataset = Storage.pullData();
-  	// proceed to update data in DC
-  	Data.updateData(dataset, update, editIdState);
+  	// proceed to deletion in DC
+  	Data.deleteData(dataset, editIdState);
   	// update data to LS
   	Storage.update(dataset);
+  	// reset state
   	document.location.reload();
+  	editIdState = undefined;
+  	}
   }
 
   return {
     init,
     submitForm,
     editRecord,
-    updateRecord
+    updateRecord,
+    deleteRecord
   }
 })();
 
@@ -258,27 +283,27 @@ $('form').addEventListener('submit', (e) => {
 
 // Users click edit button
 $('tbody').addEventListener('click', (e) => {
-	if(e.target.nodeName == 'A') {
-		const target = e.target.parentNode.parentNode.id;
-		App.editRecord(target);
-	}
-	e.preventDefault()
+  if (e.target.nodeName == 'A') {
+    const target = e.target.parentNode.parentNode.id;
+    App.editRecord(target);
+  }
+  e.preventDefault()
 });
 
 // Users click button on edit state
 $('#button-area').addEventListener('click', (e) => {
-	const target = e.target.id;
-	switch (target) {
-		case 'update':
-			App.updateRecord();
-			break;
-		case 'delete':
-			console.log('deleting data...');
-			break;
-		case 'cancel':
-			UI.clearForm();
-			UI.changeButton(false);
-			break
-	}
-	e.preventDefault();
+  const target = e.target.id;
+  switch (target) {
+    case 'update':
+      App.updateRecord();
+      break;
+    case 'delete':
+      App.deleteRecord();
+      break;
+    case 'cancel':
+      UI.clearForm();
+      UI.changeButton(false);
+      break
+  }
+  e.preventDefault();
 })

@@ -59,7 +59,7 @@ const UI = (function() {
   }
 
   function changeButton(editstate) {
-    const submit = `<input class="btn btn-primary btn-block font-weight-bolder" type="submit" value="Add Data">`;
+    const submit = `<input class="btn btn-primary btn-block font-weight-bolder" type="submit" id="submit" value="Add Data">`;
     const edit = `<input class="btn btn-warning btn-block font-weight-bolder" type="button" id="update" value="Update Data">`;
     const del = `<input class="btn btn-outline-danger btn-block" type="button" id="delete" value="Delete">`;
     const cancel = `<input class="btn btn-light btn-block font-weight-light" type="button" id="cancel" value="Cancel">`
@@ -178,10 +178,10 @@ const Data = (function() {
     dataset[index].distance = update.distance;
     return dataset
   }
-  
+
   function deleteData(dataset, id) {
-  	const index = dataset.findIndex(element => element.id == id);
-  	dataset.splice(index, 1);
+    const index = dataset.findIndex(element => element.id == id);
+    dataset.splice(index, 1);
   }
 
   return {
@@ -247,19 +247,19 @@ const App = (function() {
       editIdState = undefined;
     }
   }
-  
+
   function deleteRecord() {
-  	if(editIdState) {
-  	// pull data from LS
-  	let dataset = Storage.pullData();
-  	// proceed to deletion in DC
-  	Data.deleteData(dataset, editIdState);
-  	// update data to LS
-  	Storage.update(dataset);
-  	// reset state
-  	document.location.reload();
-  	editIdState = undefined;
-  	}
+    if (editIdState) {
+      // pull data from LS
+      let dataset = Storage.pullData();
+      // proceed to deletion in DC
+      Data.deleteData(dataset, editIdState);
+      // update data to LS
+      Storage.update(dataset);
+      // reset state
+      document.location.reload();
+      editIdState = undefined;
+    }
   }
 
   return {
@@ -274,13 +274,6 @@ const App = (function() {
 // App initialize
 App.init();
 
-// Users submit form
-$('form').addEventListener('submit', (e) => {
-  // run app controller to proccess
-  App.submitForm();
-  e.preventDefault();
-});
-
 // Users click edit button
 $('tbody').addEventListener('click', (e) => {
   if (e.target.nodeName == 'A') {
@@ -294,6 +287,9 @@ $('tbody').addEventListener('click', (e) => {
 $('#button-area').addEventListener('click', (e) => {
   const target = e.target.id;
   switch (target) {
+  	case 'submit':
+  		App.submitForm();
+  		break;
     case 'update':
       App.updateRecord();
       break;

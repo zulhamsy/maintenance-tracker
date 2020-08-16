@@ -81,13 +81,20 @@ const UI = (function() {
     }
   }
 
+  function progressBar(percent) {
+    $('#prog-oli').style.width = `${percent.oliPercent}%`;
+    $('#prog-belt').style.width = `${percent.beltPercent}%`;
+  	$('#prog-cvt').style.width = `${percent.cvtPercent}%`;
+  }
+
   return {
     show,
     get,
     clearForm,
     scrollTop,
     displayToForm,
-    changeButton
+    changeButton,
+    progressBar
   }
 })();
 
@@ -184,11 +191,34 @@ const Data = (function() {
     dataset.splice(index, 1);
   }
 
+  function countDistance(data) {
+    let dist = data.map(el => el.distance);
+    return dist.reduce((acc, curr) => {
+      return acc + curr;
+    })
+  }
+
+  function progressBar(input) {
+    const oli = 2000,
+      belt = 4000,
+      cvt = 8000;
+    const oliPercent = Math.floor(input / oli * 100),
+      beltPercent = Math.floor(input / belt * 100),
+      cvtPercent = Math.floor(input / cvt * 100);
+    return {
+      oliPercent,
+      beltPercent,
+      cvtPercent
+    }
+  }
+
   return {
     process,
     getDataById,
     updateData,
-    deleteData
+    deleteData,
+    countDistance,
+    progressBar
   }
 })();
 
@@ -202,6 +232,12 @@ const App = (function() {
     if (!fetch) return;
     // pass data to UIController
     UI.show(fetch);
+    // count total distance
+    const total = Data.countDistance(fetch);
+    // pass to DC for calculate %
+    const percent = Data.progressBar(total);
+    // pass to UI
+    UI.progressBar(percent);
   }
 
   function submitForm() {
@@ -262,12 +298,19 @@ const App = (function() {
     }
   }
 
+  function cancelEdit() {
+    UI.clearForm();
+    UI.changeButton(false);
+    editIdState = undefined;
+  }
+
   return {
     init,
     submitForm,
     editRecord,
     updateRecord,
-    deleteRecord
+    deleteRecord,
+    cancelEdit
   }
 })();
 
@@ -287,9 +330,9 @@ $('tbody').addEventListener('click', (e) => {
 $('#button-area').addEventListener('click', (e) => {
   const target = e.target.id;
   switch (target) {
-  	case 'submit':
-  		App.submitForm();
-  		break;
+    case 'submit':
+      App.submitForm();
+      break;
     case 'update':
       App.updateRecord();
       break;
@@ -297,9 +340,8 @@ $('#button-area').addEventListener('click', (e) => {
       App.deleteRecord();
       break;
     case 'cancel':
-      UI.clearForm();
-      UI.changeButton(false);
+      App.cancelEdit();
       break
   }
   e.preventDefault();
-})
+});

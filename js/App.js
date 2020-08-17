@@ -8,7 +8,7 @@ export const App = (function() {
   function init() {
     // fetch data from DataController
     let fetch = Storage.pullData();
-    if (!fetch) return;
+    if (!fetch || fetch.length == 0) return;
     // pass data to UIController
     UI.show(fetch);
     // count total distance

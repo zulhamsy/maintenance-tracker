@@ -2,6 +2,7 @@
 Web App sederhana untuk melakukan log perjalanan dan memberikan notifikasi jika kendaraan butuh servis dan maintenance
 
 ## Update
+- *17/08/2020* - App fully functional v1.0.0
 - *14/08/2020* - edit function added
 - *05/08/2020* - basic functionality, storing and fetching data from LS
 - *03/08/2020* - *First Commit* basic UI
